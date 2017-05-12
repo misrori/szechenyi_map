@@ -9,17 +9,8 @@ shinyUI(fluidPage(
   
   # Application title
   titlePanel("Old Faithful Geyser Data"),
-  tabsetPanel(
-    tabPanel("Régió",
-             fluidRow(
-             column(8, leafletOutput("regio")),
-             column(12, textOutput("ezenvagyok"))
-             
-             
-             )),
-    tabPanel("Megye", leafletOutput("megye")),
-    textOutput('ezenvagyok')
-    ),
+  leafletOutput("megye"),
+  plotlyOutput('summary_plot'),
 
   
   textOutput('enyiazoom'),

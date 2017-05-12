@@ -3,14 +3,14 @@ library(data.table)
 library(geojsonio)
 library(leaflet)
 library(shiny)
+library(plotly)
 source('load_map.R')
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
   values <- reactiveValues(A=1)
   regio_map = readOGR("../geo_map/regio.geojson", "OGRGeoJSON")
-  
-  
-  
+  adat <- data.table(read.csv('../data_eredmeny/szechenyi2020_adatok.csv'))
+
   my_zoom_level <- reactive({
     return(as.numeric(input$mymap_zoom))
   })
@@ -32,11 +32,26 @@ shinyServer(function(input, output) {
   output$enyiazoom <- renderText(my_zoom_level())
   
   my_mouse_on <- reactive({
-    input$mymap_shape_mouseover$id
-    print(input$mymap_shape_mouseover$id)
+    input$megye_shape_mouseover$id
+    print(input$megye_shape_mouseover$id)
   })
   
-  output$ezenvagyok <- renderText('my_mouse_on()')
+  output$ezenvagyok <- renderText(my_mouse_on())
   
+  
+  
+  
+  
+  my_p_plotly<- reactive({
+    adatom <- adat[MEGYE ==my_mouse_on(),list('osszeg'=sum(osszeg, na.rm = T),'nyertes_palyazat'=.N), by=c('MEGYE','operativ_program' )]
+    
+    p <- plot_ly(adatom, x =~operativ_program, y = ~osszeg, type = 'bar')#%>%
+      #layout(autosize = F, width = 1000, height = 800, margin = m, yaxis = y, xaxis = x )
+    return(p)
+  })
+  
+  output$summary_plot <- renderPlotly({
+    my_p_plotly()
+  })
   
 })
