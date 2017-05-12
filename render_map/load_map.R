@@ -13,6 +13,7 @@ regio <-
 leaflet(regio_map) %>%
   addPolygons( weight = 1, smoothFactor = 0.5,
                opacity = 1.0, fillOpacity = 0.5,popup=popup, label=~LOCALNAME,
+               labelOptions = labelOptions(noHide = T),
                fillColor = pal(regio_map$osszeg),layerId = ~LOCALNAME,
                highlightOptions = highlightOptions(color = "white", weight = 2,
                                                    bringToFront = TRUE))
@@ -34,6 +35,7 @@ get_megye <-function(){
     leaflet(megye_map) %>%
     addPolygons( weight = 1, smoothFactor = 0.5,
                  opacity = 1.0, fillOpacity = 0.5,popup=popup, label=~MEGY_NEV,
+                 labelOptions = labelOptions(noHide = T),
                  fillColor = pal(megye_map$osszeg),layerId = ~MEGY_NEV,
                  highlightOptions = highlightOptions(color = "white", weight = 2,
                                                      bringToFront = TRUE))

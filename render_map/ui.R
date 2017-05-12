@@ -6,15 +6,19 @@ library(shiny)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
+  div(h1(textOutput('ezenvagyok'), align = "center")),
   
-  # Application title
-  titlePanel("Old Faithful Geyser Data"),
+  hr(),
   leafletOutput("megye"),
-  plotlyOutput('summary_plot'),
+  hr(),
 
   
-  textOutput('enyiazoom'),
-  textOutput('ezenvagyok')
+fluidRow(
+  column(6, plotlyOutput('summary_plot', height = 250), plotlyOutput('summary_plot2', height = 250))
+),
+
+  
+  textOutput('ezclik')
   # Sidebar with a slider input for number of bins 
 
 ))

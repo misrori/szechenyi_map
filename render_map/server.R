@@ -10,13 +10,11 @@ shinyServer(function(input, output) {
   values <- reactiveValues(A=1)
   regio_map = readOGR("../geo_map/regio.geojson", "OGRGeoJSON")
   adat <- data.table(read.csv('../data_eredmeny/szechenyi2020_adatok.csv'))
+  adat$ev <- year(adat$datum)
 
   my_zoom_level <- reactive({
     return(as.numeric(input$mymap_zoom))
   })
-  
- 
-  
 
   output$regio <- renderLeaflet({
    
@@ -39,11 +37,15 @@ shinyServer(function(input, output) {
   output$ezenvagyok <- renderText(my_mouse_on())
   
   
+  cliked <- reactive({
+    input$megye_shape_click$id
+    print(input$megye_shape_click$id)
+  })
   
-  
+  output$ezclik <- renderText(cliked())
   
   my_p_plotly<- reactive({
-    adatom <- adat[MEGYE ==my_mouse_on(),list('osszeg'=sum(osszeg, na.rm = T),'nyertes_palyazat'=.N), by=c('MEGYE','operativ_program' )]
+    adatom <- adat[MEGYE ==cliked(),list('osszeg'=sum(osszeg, na.rm = T),'nyertes_palyazat'=.N), by=c('MEGYE','operativ_program' )]
     
     p <- plot_ly(adatom, x =~operativ_program, y = ~osszeg, type = 'bar')#%>%
       #layout(autosize = F, width = 1000, height = 800, margin = m, yaxis = y, xaxis = x )
@@ -54,4 +56,22 @@ shinyServer(function(input, output) {
     my_p_plotly()
   })
   
+  
+  my_p_plotly2<- reactive({
+        adatom2 <- adat[MEGYE ==cliked(),list('osszeg'=sum(osszeg, na.rm = T),'nyertes_palyazat'=.N), by=c('MEGYE','ev' )]
+    
+    p <- plot_ly(adatom2, x =~ev, y = ~osszeg, type = 'bar')
+    return(p)
+  })
+  
+  output$summary_plot2 <- renderPlotly({
+    my_p_plotly2()
+  })
+
+  
+  
+    
 })
+
+
+
